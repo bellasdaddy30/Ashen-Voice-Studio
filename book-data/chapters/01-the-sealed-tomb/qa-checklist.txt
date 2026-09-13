@@ -1,0 +1,29 @@
+THE FIRST CITY — CHAPTER 1 — QA CHECKLIST
+
+Canonical segments: 196
+Canonical speakers:
+- Narrator: 89
+- Zik: 49
+- Balag: 16
+- Enhedu: 16
+- Kurash: 20
+- Bel-iddin: 5
+- Dead King: 1
+
+PASS CONDITIONS
+[ ] App opens without a fatal screen.
+[ ] Repository Project Loader shows Manifest, Production, Characters, Pronunciations, Guide as loaded.
+[ ] Character count is 7.
+[ ] No character or line contains Unknown / Unidentified.
+[ ] Zik, Zikir, and Zikir Ashur resolve to the Zik character profile.
+[ ] Second-door warning is Bel-iddin.
+[ ] Dead King speaks the tomb line assigned to him.
+[ ] Load Voice Engine shows visible progress.
+[ ] Character Preview produces a visible player.
+[ ] If Safari blocks autoplay, the visible preview player can play manually.
+[ ] Line Preview works.
+[ ] Manual speaker change can be locked.
+[ ] Manual direction override can be locked.
+[ ] Clean master can be assembled independently of SFX.
+[ ] SFX cues can be previewed, enabled, placed and mixed.
+[ ] Final SFX master is separate from the clean narration master.
