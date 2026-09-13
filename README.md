@@ -8,6 +8,38 @@ Canonical clean repository for the phone-first audiobook production app.
 
 This repository is designed for direct Vercel deployment from GitHub.
 
+## Repository layout
+
+```text
+Ashen-voice-studio/
+├── index.html
+├── kokoro-worker.js
+├── diagnostics.html
+├── vercel.json
+├── .gitignore
+├── README.md
+├── docs/
+└── book-data/
+    ├── manifest.json
+    ├── characters/
+    │   └── character-cards.json
+    ├── global/
+    │   └── pronunciations.txt
+    ├── chapters/
+    │   └── 01-the-sealed-tomb/
+    │       ├── production.json
+    │       ├── manuscript.txt
+    │       ├── pronunciations.txt
+    │       ├── pronunciation-notes.txt
+    │       ├── production-guide.txt
+    │       ├── overrides.json
+    │       ├── sfx-suggestions.json
+    │       └── qa-checklist.txt
+    └── sfx/
+        ├── library.json
+        └── audio/
+```
+
 ## Chapter One canon
 
 Segments: **196**
@@ -28,8 +60,37 @@ The crowned skeleton speaker uses the canon role Dead King.
 
 ## Startup flow
 
-The studio loads `/book-data/manifest.json`, then automatically pulls the active chapter production map, manuscript, cast cards, pronunciation rules, production guide, and SFX library.
+1. `index.html` starts.
+2. It fetches `/book-data/manifest.json`.
+3. The manifest identifies the active chapter and project files.
+4. Character cards, production, manuscript, pronunciations and guide load automatically.
+5. Auto Director creates contextual performance direction.
+6. Manual character, speaker and performance overrides remain available.
+7. Kokoro is loaded only when voice generation is requested.
+8. Kokoro runs in `kokoro-worker.js` so model work does not block the main UI.
+9. SFX are mixed after the clean narration master.
 
-Kokoro runs in `kokoro-worker.js` so TTS model work stays off the main UI thread. `/diagnostics.html` checks the worker, project files and iPhone audio without loading the full model.
+## iPhone preview behavior
 
-Manual character edits, speaker corrections, line-direction overrides, Auto Director, clean narration assembly, and post-production SFX mixing are all part of the app.
+The Preview tap unlocks Web Audio immediately. Kokoro then generates in the worker.
+When the WAV is ready, Ashen Voice attempts playback through the unlocked context and also shows a visible HTML audio player as a fallback.
+
+## Diagnostics
+
+Open:
+
+`/diagnostics.html`
+
+This checks the worker, manifest, data files, WebGPU, IndexedDB and iPhone audio without loading the full Kokoro model.
+
+## Adding SFX
+
+Put licensed audio under:
+
+`book-data/sfx/audio/`
+
+Then register it in:
+
+`book-data/sfx/library.json`
+
+Do not put GitHub tokens or other secrets in `index.html`.

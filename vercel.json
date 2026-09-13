@@ -1,40 +1,8 @@
 {
   "headers": [
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/kokoro-worker.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/diagnostics.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/book-data/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    }
+    {"source":"/index.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/kokoro-worker.js","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/diagnostics.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/book-data/(.*)","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]}
   ]
 }
