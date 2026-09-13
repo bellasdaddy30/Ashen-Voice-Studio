@@ -1,0 +1,80 @@
+THE FIRST CITY — CHAPTER 1: THE SEALED TOMB
+ASHEN VOICE — COMPLETE PRODUCTION GUIDE
+
+SOURCE POLICY
+- Preserve the published prose.
+- Dialogue tags and action beats stay with Narrator.
+- No unidentified or unknown characters are permitted.
+- Zik, Zikir, and Zikir Ashur are the SAME character.
+- The second-door warning is performed by Bel-iddin.
+- The crowned skeleton is the canon role Dead King.
+
+TOTAL SEGMENTS
+196
+
+SEGMENT COUNTS
+- Narrator: 89
+- Zik: 49
+- Balag: 16
+- Enhedu: 16
+- Kurash: 20
+- Bel-iddin: 5
+- Dead King: 1
+
+CAST / VOICE DEFAULTS
+Narrator — Michael — speed 0.92 — pitch -0.2 — warm — restrained
+Zik — Fenrir — speed 0.94 — pitch -0.5 — warm — dry/controlled
+Balag — George — speed 0.89 — pitch -1.0 — warm — grounded/deadpan
+Enhedu — Bella — speed 0.96 — pitch -0.1 — crisp — sharp/understated
+Kurash — Puck — speed 1.01 — pitch +0.55 — bright — young/eager
+Bel-iddin — Lewis — speed 0.86 — pitch -0.8 — warm — intimate/grave
+Dead King — Onyx — speed 0.72 — pitch -2.0 — dark — dry/ominous
+
+MASTER PACING
+- Narrator target: roughly 145–155 words per minute.
+- Kurash may run slightly faster, roughly 155–165 WPM.
+- Balag and Bel-iddin should sit slower.
+- Normal conversation should breathe only 0.10–0.30 seconds between closely connected turns.
+- Do not put theatrical gaps after every speaker change.
+- Longer pauses already marked in the production JSON should be honored.
+
+SCENE ARC
+1. Chapter heading/title: clean, deliberate, unhurried.
+2. Excavation discovery: measured curiosity, dry banter, sunlit realism.
+3. Mortar lesson: Zik sounds technically confident; Bel-iddin's remembered lines feel intimate and familiar.
+4. Dig/descent: gradually remove warmth; increase tension without speeding everything up.
+5. Stone door: cautious, observant, contained.
+6. Treasure chamber: slow enough for listeners to visualize the geometry and unnatural cleanliness.
+7. Kurash's temptation: his eagerness becomes rationalization, not stupidity.
+8. Trap/death: the physical event moves quickly; the emotional beat afterward does not.
+9. Throne/compass/journal: increasingly intimate and uncanny; let silence do work.
+10. Bel-iddin's journal: first two lines grave and controlled; second-door warning urgent and strained.
+11. Dead King: very slow, dry, intelligible. Minimal processing. No monster roar.
+12. Final Zik line: dry shock and attempted self-control, not a punchline.
+
+AUDIO PROCESSING
+- Normalize final dialogue/narration consistently.
+- Avoid heavy reverb on any character.
+- Dead King may be darker/lower, but keep consonants intelligible.
+- Avoid exaggerated accents unless later established as canon.
+- If line-level processing makes speech muddy, reduce effect before changing the base voice.
+
+PRONUNCIATION
+Use 03_Pronunciations.txt. The forced canonical audiobook readings are:
+- Zik: Zeek
+- Zikir: Zee-keer
+- Ashur: ash-SHOOR
+- Kurash: KOO-rash
+- Enhedu: en-HEH-doo
+- Balag: BAH-lahg
+- Bel-iddin: BAYL-ID-din
+
+QUALITY CONTROL BEFORE FINAL ASSEMBLY
+- Confirm all 196 segments exist.
+- Confirm no speaker value contains Unknown, Unidentified, Writer, or blank.
+- Confirm every Zikir/Zikir Ashur reference uses Zik's character profile except when another character is speaking his name.
+- Confirm the second-door warning is Bel-iddin.
+- Confirm the Dead King line has a longer silence afterward.
+- Confirm no line was truncated by TTS.
+- Confirm no pronunciation replacement leaks into displayed manuscript text.
+- Confirm chapter master begins cleanly and ends with a long enough tail after “that's new.”
