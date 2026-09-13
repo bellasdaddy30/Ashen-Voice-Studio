@@ -1,0 +1,21 @@
+# THE FIRST CITY — CHAPTER 1 — CANONICAL AUDIOBOOK PRONUNCIATIONS
+# Lines containing "->" are imported by Ashen Voice.
+# These readings are production canon for this audiobook.
+
+Zik -> Zeek
+Zikir -> Zee-keer
+Ashur -> ash-SHOOR
+Kurash -> KOO-rash
+Enhedu -> en-HEH-doo
+Balag -> BAH-lahg
+Bel-iddin -> BAYL-ID-din
+
+# WATCH LIST — do not force unless the selected voice actually mispronounces them:
+# kiln
+# jamb
+# lintel
+# awl
+# masonry
+# corrosion
+# geometric
+# mortar
