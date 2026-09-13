@@ -1,0 +1,30 @@
+THE FIRST CITY — CHAPTER 1 — PRONUNCIATION NOTES
+
+These are the recommended CANONICAL AUDIOBOOK readings for this production.
+
+Zik — "Zeek"
+Reason: keeps the nickname naturally connected to Zikir.
+
+Zikir — "Zee-keer"
+Reason: gives the full name two clean syllables and keeps the nickname Zik/Zeek intuitive.
+
+Ashur — "ash-SHOOR"
+Reason: aligns well with the Mesopotamian/Akkadian Aššur tradition, with stress on the second syllable.
+
+Kurash — "KOO-rash"
+Reason: preserves the spelling used in the novel and fits the Kuraš-form family better than an English 'Cyrus' reading. Chosen for this audiobook's canon.
+
+Enhedu — "en-HEH-doo"
+Reason: keeps the visible En-hedu structure recognizable and is easy for English TTS to reproduce consistently.
+
+Balag — "BAH-lahg"
+Reason: close, simple reading of the Sumerian-looking form; broad first vowel, final hard g.
+
+Bel-iddin — "BAYL-ID-din"
+Reason: reflects long-vowel Bēl plus iddin while remaining intelligible to English listeners.
+
+WATCH WORDS
+The following ordinary English archaeological terms should normally be left alone because modern TTS handles them correctly:
+kiln, jamb, lintel, awl, masonry, corrosion, geometric, mortar.
+
+If Kokoro produces a bad reading on a specific selected voice, add a replacement only after auditioning that voice. Do not pre-phoneticize common English words unnecessarily.
