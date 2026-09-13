@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "suggestions": [
+    {"label":"Desert wind across excavation","type":"wind","lineId":"d51e4780-2584-42c5-a63f-be239879e159","anchor":"start","offset":-0.35,"volume":0.1,"duration":4.5},
+    {"label":"Cold draft entering stairway","type":"wind","lineId":"7e14592b-6ea1-4f62-bfcd-3f1a86832813","anchor":"start","offset":1.0,"volume":0.075,"duration":4.0},
+    {"label":"Distant underground movement","type":"rumble","lineId":"f0d10497-9ab0-47a2-b72f-09f65a7db6e4","anchor":"start","offset":2.3,"volume":0.14,"duration":3.2},
+    {"label":"Bronze brackets / sealed stone","type":"stoneScrape","lineId":"1c3dc6b5-3404-4933-a670-0019bcdadc70","anchor":"start","offset":1.2,"volume":0.08,"duration":1.8},
+    {"label":"Trap slab impact","type":"stoneHit","lineId":"38d112e4-1ddf-4bbd-85aa-17535c4dcf7f","anchor":"start","offset":2.2,"volume":0.3,"duration":1.3},
+    {"label":"Compass needle metallic movement","type":"metalTick","lineId":"696ddcce-2ebb-43e2-9072-e264772a2ca6","anchor":"start","offset":1.5,"volume":0.11,"duration":0.9},
+    {"label":"Torch disturbance","type":"torch","lineId":"c6fd396a-0198-46c4-9565-adcd9b852024","anchor":"start","offset":1.5,"volume":0.08,"duration":2.0},
+    {"label":"Skeleton collapse / bones on stone","type":"bones","lineId":"b9905ca3-cfd7-4733-901c-e3a0349a1ce3","anchor":"start","offset":0.2,"volume":0.2,"duration":1.8},
+    {"label":"Deep movement beneath tomb","type":"rumble","lineId":"b9905ca3-cfd7-4733-901c-e3a0349a1ce3","anchor":"start","offset":2.0,"volume":0.17,"duration":4.0}
+  ]
+}
