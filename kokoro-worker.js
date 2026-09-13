@@ -1,0 +1,88 @@
+// Ashen Voice Studio v0.7.0 — isolated Kokoro worker
+let tts=null;
+let currentDevice=null;
+let currentDtype=null;
+
+function ensureReadableStreamAsyncIterator(){
+  const RS=self.ReadableStream;
+  if(!RS||!self.Symbol||!Symbol.asyncIterator)return;
+  if(!RS.prototype[Symbol.asyncIterator]){
+    Object.defineProperty(RS.prototype,Symbol.asyncIterator,{
+      configurable:true,writable:true,
+      value:async function*(){
+        const reader=this.getReader();
+        try{while(true){const r=await reader.read();if(r.done)return;yield r.value}}
+        finally{try{reader.releaseLock()}catch{}}
+      }
+    });
+  }
+  if(!RS.prototype.values){
+    Object.defineProperty(RS.prototype,'values',{configurable:true,writable:true,value:function(){return this[Symbol.asyncIterator]()}});
+  }
+}
+function status(message,busy=true){postMessage({type:'status',message,busy})}
+function errorText(e){return (e&&e.stack)||String(e&&e.message||e)}
+
+async function getModule(){
+  ensureReadableStreamAsyncIterator();
+  status('Loading Kokoro browser library…',true);
+  return await import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js');
+}
+
+async function loadEngine(model,device,dtype){
+  if(tts&&device===currentDevice&&dtype===currentDtype)return {device,dtype};
+  tts=null;
+  const {KokoroTTS}=await getModule();
+  if(!KokoroTTS)throw new Error('KokoroTTS export missing');
+  const progress_callback=(data)=>{try{postMessage({type:'progress',data})}catch{}};
+  try{
+    status(`Loading Kokoro model · ${device} ${dtype}`,true);
+    tts=await KokoroTTS.from_pretrained(model,{device,dtype,progress_callback});
+    currentDevice=device;currentDtype=dtype;
+    return {device,dtype};
+  }catch(e){
+    if(device==='webgpu'){
+      status('WebGPU load failed · retrying WASM q4',true);
+      tts=await KokoroTTS.from_pretrained(model,{device:'wasm',dtype:'q4',progress_callback});
+      currentDevice='wasm';currentDtype='q4';
+      return {device:'wasm',dtype:'q4'};
+    }
+    throw e;
+  }
+}
+
+self.onmessage=async(ev)=>{
+  const m=ev.data||{},id=m.id;
+  try{
+    if(m.type==='ping'){
+      postMessage({id,ok:true,type:'pong',version:'0.7.0'});
+      return;
+    }
+    if(m.type==='load'){
+      const r=await loadEngine(m.model,m.device,m.dtype);
+      status(`Voice engine ready · ${r.device} ${r.dtype}`,false);
+      postMessage({id,ok:true,...r});
+      return;
+    }
+    if(m.type==='generate'){
+      if(!tts)throw new Error('Voice engine is not loaded');
+      status('Generating voice preview…',true);
+      const a=await tts.generate(m.text,{voice:m.voice,speed:m.speed||1});
+      let blob;
+      if(typeof a.toBlob==='function')blob=await a.toBlob();
+      else throw new Error('Kokoro returned audio without toBlob()');
+      status('Voice preview generated',false);
+      postMessage({id,ok:true,blob});
+      return;
+    }
+    if(m.type==='dispose'){
+      try{await tts?.dispose?.()}catch{}
+      tts=null;currentDevice=null;currentDtype=null;
+      postMessage({id,ok:true});
+      return;
+    }
+    throw new Error('Unknown worker command');
+  }catch(e){
+    postMessage({id,ok:false,error:errorText(e)});
+  }
+};
