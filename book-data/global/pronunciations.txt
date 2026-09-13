@@ -1,0 +1,10 @@
+# THE FIRST CITY — GLOBAL AUDIOBOOK PRONUNCIATIONS
+# Loaded before chapter-specific rules.
+
+Zik -> Zeek
+Zikir -> Zee-keer
+Ashur -> ash-SHOOR
+Kurash -> KOO-rash
+Enhedu -> en-HEH-doo
+Balag -> BAH-lahg
+Bel-iddin -> BAYL-ID-din
