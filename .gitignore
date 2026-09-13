@@ -1,0 +1,9 @@
+# Local/editor debris
+.DS_Store
+Thumbs.db
+*.log
+
+# Do not commit rendered audiobook output
+renders/
+exports/
+*.tmp
