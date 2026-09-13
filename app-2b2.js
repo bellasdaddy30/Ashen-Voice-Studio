@@ -14,5 +14,16 @@ async function restore(e){const f=e.target.files?.[0];if(!f)return;try{state=mig
 function revokeAll(){revokeUrls();}
 
 window.addEventListener('pagehide',()=>{try{if(state)save();}catch{}try{previewBufferSource?.stop()}catch{}try{previewAudioContext?.close()}catch{}revokeAll()});
-function boot(){try{state=loadState();selectedCharacterId=state.characters[0]?.id||null;render();document.body.dataset.ashenReady='1';setStatus('Ready');}catch(e){console.error(e);(window.__ashenFatal||alert)((e&&e.stack)||String(e));}}
+function boot(){
+  try{
+    state=loadState();
+    selectedCharacterId=state.characters[0]?.id||null;
+    render();
+    document.body.dataset.ashenReady='1';
+    setStatus('Ready');
+  }catch(e){
+    console.error(e);
+    (window.__ashenFatal||alert)((e&&e.stack)||String(e));
+  }
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
