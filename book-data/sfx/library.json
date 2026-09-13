@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "version": 1,
+  "description": "Repo-hosted SFX. Ashen Voice also includes built-in procedural effects. Add licensed audio files under book-data/sfx/audio and register them here.",
+  "effects": []
+}
