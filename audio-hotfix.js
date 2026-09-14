@@ -1,12 +1,20 @@
-// Ashen Voice Studio v0.7.5 audio-quality hotfix
-// iPhone/iPad: force Kokoro WASM q8 and rebuild WAV blobs on the main thread
-// from raw ArrayBuffer bytes returned by the worker.
+// Ashen Voice Studio v0.7.6 audio engine bridge
+// iPhone/iPad: force Kokoro WASM q8. Worker returns raw Float32 PCM buffers.
 
 function isAppleMobile(){return /iPhone|iPad|iPod/i.test(navigator.userAgent)}
+function workerAudioToBlob(g){
+  if(g?.pcmBuffer){
+    const pcm=new Float32Array(g.pcmBuffer);
+    return encodeWav(pcm,g.sampleRate||24000);
+  }
+  if(g?.audioBuffer)return new Blob([g.audioBuffer],{type:g.mime||'audio/wav'});
+  if(g?.blob)return g.blob;
+  throw new Error('Voice worker returned no audio data');
+}
 
 ensureKokoroWorker=function(){
   if(kokoroWorker)return kokoroWorker;
-  const w=new Worker('/kokoro-worker.js?v=075',{type:'module'});
+  const w=new Worker('/kokoro-worker.js?v=076',{type:'module'});
   kokoroWorker=w;
   w.onmessage=(ev)=>{
     const m=ev.data||{};
@@ -46,21 +54,13 @@ loadKokoro=async function(){
     const apple=isAppleMobile();
     let device=state.settings.device;
     let dtype=state.settings.dtype||'q8';
-
     if(apple){
-      // Kokoro q8 is dramatically smaller than q4 in this model family and is
-      // the library's documented JavaScript example. Keep iOS on the stable
-      // WASM path rather than WebGPU while Safari support remains inconsistent.
-      device='wasm';
-      dtype='q8';
-      state.settings.device='wasm';
-      state.settings.dtype='q8';
+      device='wasm';dtype='q8';state.settings.device='wasm';state.settings.dtype='q8';
     }else{
       if(device==='auto')device=navigator.gpu?'webgpu':'wasm';
       if(state.settings.memorySaver)dtype='q8';
       if(device==='webgpu'&&dtype==='fp32')dtype='fp16';
     }
-
     const cfg=`${device}:${dtype}`;
     if(kokoroWorkerReady&&kokoroWorkerConfigKey===cfg)return kokoro;
     setVoiceBusy(true,apple?'Starting iPhone quality engine · WASM q8':`Starting voice engine · ${device} ${dtype}`);
@@ -70,11 +70,13 @@ loadKokoro=async function(){
     kokoro={
       generate:async(text,opts={})=>{
         const g=await kokoroWorkerCall('generate',{text,voice:opts.voice,speed:opts.speed||1});
-        return {toBlob:async()=>{
-          if(g.audioBuffer)return new Blob([g.audioBuffer],{type:g.mime||'audio/wav'});
-          if(g.blob)return g.blob;
-          throw new Error('Voice worker returned no audio data');
-        }};
+        return{toBlob:async()=>workerAudioToBlob(g)};
+      },
+      generateBlend:async(text,opts={})=>{
+        const g=await kokoroWorkerCall('generateBlend',{
+          text,voiceA:opts.voiceA,voiceB:opts.voiceB,weight:opts.weight,speed:opts.speed||1
+        });
+        return workerAudioToBlob(g);
       },
       dispose:async()=>{try{await kokoroWorkerCall('dispose')}catch{}}
     };
