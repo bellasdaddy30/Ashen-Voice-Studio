@@ -6,10 +6,11 @@
     }
   ],
   "headers": [
-    {"source":"/index.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/index.html","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]},
+    {"source":"/styles.css","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]},
     {"source":"/kokoro-worker.js","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
-    {"source":"/diagnostics.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
-    {"source":"/book-data/(.*)","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/diagnostics.html","headers":[{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]},
+    {"source":"/book-data/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=300, stale-while-revalidate=86400"}]},
     {"source":"/ort/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]}
   ]
 }
