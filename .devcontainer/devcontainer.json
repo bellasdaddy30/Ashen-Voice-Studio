@@ -1,12 +1,13 @@
 {
-  "name": "Ashen Voice Studio Test",
-  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "name": "Ashen Voice Fixed WASM Test",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
   "forwardPorts": [8080],
   "portsAttributes": {
     "8080": {
-      "label": "Ashen Voice v0.8.4 Runtime Test",
+      "label": "Ashen Voice · Fixed VoxShot WASM",
       "onAutoForward": "openBrowser"
     }
   },
-  "postStartCommand": "nohup python3 .devcontainer/serve_test.py > /tmp/ashen-codespace.log 2>&1 &"
+  "postCreateCommand": "bash .devcontainer/setup_voxshot.sh",
+  "postStartCommand": "cd .codespace-test && nohup npm run dev -- --host 0.0.0.0 --port 8080 > /tmp/ashen-fixed-wasm.log 2>&1 &"
 }
