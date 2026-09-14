@@ -57,8 +57,8 @@
     const baseLoadRepo=loadRepo;
     loadRepo=async function(...args){const ok=await baseLoadRepo(...args);if(ok)await migrateLegacy();return ok};
   }
-  setTimeout(()=>{if(window.state)migrateLegacy().catch(()=>{})},700);
-  setTimeout(()=>{if(window.state)migrateLegacy().catch(()=>{})},1800);
+  setTimeout(()=>{try{if(state)migrateLegacy().catch(()=>{})}catch{}},700);
+  setTimeout(()=>{try{if(state)migrateLegacy().catch(()=>{})}catch{}},1800);
 
   function sourceToneSpec(tone){
     if(typeof avToneSpec==='function')return avToneSpec(tone);
@@ -162,15 +162,25 @@
   async function clearPerf(l){await dbDel(perfKey(l)).catch(()=>{});const m=metaRead();delete m[l.id];metaWrite(m);await invalidateLine(l)}
   async function getPerf(l){return dbGet(perfKey(l)).catch(()=>null)}
 
-  const baseRenderLine=renderLine;
-  renderLine=async function(l){
-    const c=withFx({...charByName(l.speaker)}),p=await getPerf(l);
-    if(p)return processRecorded(p,c,l);
-    if(c.mode==='record')throw Error(`${c.name} is set to Recorded mode, but this line has no recording. Tap Record / Import on the line.`);
-    const out=await baseRenderLine(l);
-    if(Math.max(c.rasp,c.breath,c.crackle,c.dryness,c.echo)<.005)return out;
-    return processSyntheticTexture(out,c);
-  };
+  function installRenderPatch(){
+    if(typeof renderLine!=='function'||renderLine.__avPerformanceV090)return;
+    const prior=renderLine;
+    const wrapped=async function(l){
+      const c=withFx({...charByName(l.speaker)}),p=await getPerf(l);
+      if(p)return processRecorded(p,c,l);
+      if(c.mode==='record')throw Error(`${c.name} is set to Recorded mode, but this line has no recording. Tap Record / Import on the line.`);
+      const out=await prior(l);
+      if(Math.max(c.rasp,c.breath,c.crackle,c.dryness,c.echo)<.005)return out;
+      return processSyntheticTexture(out,c);
+    };
+    wrapped.__avPerformanceV090=true;
+    renderLine=wrapped;
+  }
+  installRenderPatch();
+  if(typeof patchRender==='function'){
+    const basePatchRender=patchRender;
+    patchRender=function(){basePatchRender();installRenderPatch()};
+  }
 
   const baseProfileSummary=profileSummary;
   profileSummary=function(c){if(c.mode==='record')return 'Recorded performances · per-line audio';const s=baseProfileSummary(c);const mx=Math.max(c.rasp||0,c.breath||0,c.crackle||0,c.dryness||0,c.echo||0);return mx>.01?`${s} · texture ${Math.round(mx*100)}%`:s};
