@@ -1,6 +1,7 @@
 import { ChatterboxEngine } from 'voxshot-fixed';
 import * as tf from '@huggingface/transformers';
 
+const BUILD = 'FIXED-VOXSHOT-8091';
 const button = document.querySelector('#test');
 const log = document.querySelector('#log');
 const ORT_WASM = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.26.0-dev.20260416-b7804b056c/dist/ort-wasm-simd-threaded.wasm';
@@ -10,9 +11,13 @@ function write(line = '') {
   log.scrollTop = log.scrollHeight;
 }
 function fail(error) {
+  const text = error?.stack || error?.message || String(error);
   log.className = 'bad';
   write('\nFAILED');
-  write(error?.stack || error?.message || String(error));
+  write(text);
+  if (/kokoro-js|kokoro\.web/i.test(text)) {
+    write('\nWRONG PAGE/SERVER DETECTED: this build never imports Kokoro. Open the forwarded port labeled “Ashen Voice · Fixed VoxShot WASM · PORT 8091”.');
+  }
 }
 
 button.addEventListener('click', async () => {
@@ -20,11 +25,13 @@ button.addEventListener('click', async () => {
   log.className = '';
   log.textContent = '';
   try {
-    write('Ashen fixed-source WASM test');
+    write(`Build: ${BUILD}`);
+    write(`URL: ${location.href}`);
     write(`User agent: ${navigator.userAgent}`);
     write(`WebGPU exposed by browser: ${Boolean(navigator.gpu)}`);
-    write('Requested engine: WASM only');
+    write('Requested engine: Chatterbox WASM only');
     write('Requested language model: q4');
+    write('Kokoro imported by this page: NO');
     write('VoxShot source: b6abd46a724b381fb787aac534d3f59936644d7b');
     write('');
 
@@ -67,7 +74,7 @@ button.addEventListener('click', async () => {
     log.className = 'good';
     write('');
     write(`SUCCESS: ${JSON.stringify(plan)}`);
-    write('This iPhone can load the fixed Chatterbox engine in browser WASM mode.');
+    write('This iPhone loaded the fixed Chatterbox engine in browser WASM mode.');
     window.__ashenFixedEngine = engine;
   } catch (error) {
     fail(error);
