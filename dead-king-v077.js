@@ -1,4 +1,4 @@
-// Ashen Voice Studio v0.7.9 — Dead King complete performance preset
+// Ashen Voice Studio v0.8.0 — Dead King complete performance preset
 (function(){
   function applyDeadKingPreset(c){
     Object.assign(c,{
@@ -13,10 +13,10 @@
       emotion:'whispered',
       intensity:.90,
       pause:.90,
-      rasp:.82,
-      breath:.16,
-      crackle:.48,
-      dryness:.72
+      rasp:.88,
+      breath:.04,
+      crackle:.62,
+      dryness:.36
     });
     try{rememberChar(c)}catch{}
     try{invalidateSpeaker(c.name)}catch{try{save()}catch{}}
@@ -36,7 +36,7 @@
       const d=baseDirect(l,i,ls);
       if((l.speaker||'').toLowerCase()==='dead king'){
         Object.assign(d,{
-          label:'ancient / dry rasp / cracked whisper / threatening',
+          label:'ancient / pulse-creak / cracked whisper / threatening',
           emotionPreset:'whispered',
           speedFactor:.94,
           pitchDelta:-.20,
