@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.7.0",
+  "version": "0.9.0",
   "book": "The First City",
   "author": "C. R. Ashen",
   "activeChapter": "01-the-sealed-tomb",
@@ -13,11 +13,7 @@
       "production": "chapters/01-the-sealed-tomb/production.json",
       "manuscript": "chapters/01-the-sealed-tomb/manuscript.txt",
       "pronunciations": "chapters/01-the-sealed-tomb/pronunciations.txt",
-      "guide": "chapters/01-the-sealed-tomb/production-guide.txt",
-      "overrides": "chapters/01-the-sealed-tomb/overrides.json",
-      "pronunciationNotes": "chapters/01-the-sealed-tomb/pronunciation-notes.txt",
-      "sfxSuggestions": "chapters/01-the-sealed-tomb/sfx-suggestions.json",
-      "qa": "chapters/01-the-sealed-tomb/qa-checklist.txt"
+      "guide": "chapters/01-the-sealed-tomb/production-guide.txt"
     }
   }
 }
