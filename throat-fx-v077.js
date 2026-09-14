@@ -3,7 +3,6 @@
 (function(){
   const n01=v=>Math.max(0,Math.min(1,Number(v)||0));
 
-  // Preserve throat controls through project migration / repo reloads.
   const baseMakeChar=makeChar;
   makeChar=function(c={}){
     const out=baseMakeChar(c);
@@ -14,7 +13,6 @@
     return out;
   };
 
-  // Preserve throat controls in character overrides as well as normal local state.
   if(typeof rememberChar==='function'){
     const baseRememberChar=rememberChar;
     rememberChar=function(c){
@@ -27,7 +25,6 @@
     };
   }
 
-  // Seeded PRNG keeps a character's throat texture repeatable instead of random on every preview.
   function rng32(seed){
     let x=(seed>>>0)||0x6d2b79f5;
     return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return((x>>>0)/4294967296)};
@@ -57,15 +54,12 @@
     for(let i=0;i<N;i++){
       const x=src[i];
       const a=Math.abs(x);
-      env += (a>env?.16:.0025)*(a-env);
+      env += (a>env ? .16 : .0025)*(a-env);
 
-      // Dry throat: reduce some low body and emphasize the leading edge of consonants.
       low += .018*(x-low);
       const edge=x-prevX;prevX=x;
       let y=x + dryness*(edge*.11-low*.045);
 
-      // Rasp: gentle nonlinear fry plus tiny low-frequency irregularity. It roughens
-      // the existing speaker rather than adding a second voice.
       const saturated=Math.tanh(y*drive)/driveNorm;
       const raspMix=rasp*.24;
       y=y*(1-raspMix)+saturated*raspMix;
@@ -73,13 +67,11 @@
       if(fryPhase>Math.PI*2)fryPhase-=Math.PI*2;
       y*=1-rasp*.055*(.5+.5*Math.sin(fryPhase))*Math.min(1,env*5);
 
-      // Breath: high-passed deterministic noise, active mostly while speech is present.
       const white=rand()*2-1;
       const hp=white-prevNoise*.94;prevNoise=white;
       const breathGain=breath*(.0025+.012*Math.sqrt(Math.min(1,env*4)));
       y+=hp*breathGain;
 
-      // Crackle: sparse 2–7 ms throat catches/noise bursts, only while there is voice.
       if(i>=nextCrack&&env>.018&&crackle>.01){
         crackLen=Math.max(2,Math.floor(rate*(.002+rand()*.005)));
         crackLeft=crackLen;crackShape=.7+rand()*.3;
@@ -100,14 +92,12 @@
     return encodeWav(avLimitPcm(out,.965),rate);
   }
 
-  // Apply throat texture after the v0.7.6 true blend / pitch / tone path.
   const baseSynthesize=synthesizeProfile;
   synthesizeProfile=async function(text,c){
     const clean=await baseSynthesize(text,c);
     return throatProcess(clean,{rasp:c.rasp,breath:c.breath,crackle:c.crackle,dryness:c.dryness});
   };
 
-  // Add the four throat controls to Voice Lab without duplicating the core dialog code.
   const baseOpenVoiceLab=openVoiceLab;
   openVoiceLab=function(id){
     baseOpenVoiceLab(id);
@@ -115,8 +105,7 @@
     const preview=byId('previewText');
     if(!preview||byId('throatFxBox'))return;
     const box=document.createElement('div');
-    box.id='throatFxBox';box.className='card';
-    box.style.margin='12px 0';
+    box.id='throatFxBox';box.className='card';box.style.margin='12px 0';
     box.innerHTML=`<div class="sectionHead"><div><strong>Throat Texture</strong><div class="mini">Adds damaged-throat texture after synthesis without layering another speaker.</div></div><span class="chip">vocal FX</span></div>
       <div class="voiceGrid">
         ${fxSlider('Rasp','vRasp',c.rasp,'harmonic fry / rough vocal cords')}
