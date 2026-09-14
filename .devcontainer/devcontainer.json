@@ -9,5 +9,5 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/setup_voxshot.sh",
-  "postStartCommand": "cd .codespace-test && nohup npm run serve > /tmp/ashen-fixed-wasm-8091.log 2>&1 &"
+  "postStartCommand": "nohup node .devcontainer/static_server.mjs > /tmp/ashen-fixed-wasm-8091.log 2>&1 &"
 }
