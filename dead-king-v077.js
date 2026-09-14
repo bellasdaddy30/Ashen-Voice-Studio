@@ -1,4 +1,4 @@
-// Ashen Voice Studio v0.7.7 — Dead King complete performance preset
+// Ashen Voice Studio v0.7.8 — Dead King complete performance preset
 (function(){
   function applyDeadKingPreset(c){
     Object.assign(c,{
@@ -13,16 +13,15 @@
       emotion:'whispered',
       intensity:.90,
       pause:.90,
-      rasp:.62,
-      breath:.28,
-      crackle:.30,
-      dryness:.58
+      rasp:.72,
+      breath:.34,
+      crackle:.38,
+      dryness:.68
     });
     try{rememberChar(c)}catch{}
     try{invalidateSpeaker(c.name)}catch{try{save()}catch{}}
   }
 
-  // Make the Voice Lab preset button configure the entire voice recipe.
   const priorOpenVoiceLab=openVoiceLab;
   openVoiceLab=function(id){
     priorOpenVoiceLab(id);
@@ -31,8 +30,6 @@
     if(b)b.onclick=()=>{applyDeadKingPreset(c);openVoiceLab(c.id)};
   };
 
-  // The chapter Auto Director must preserve the whisper rather than replacing it
-  // with the older ominous preset during line rendering.
   if(typeof direct==='function'){
     const baseDirect=direct;
     direct=function(l,i,ls){
