@@ -1,0 +1,14 @@
+{
+  "name": "ashen-voice-fixed-wasm-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}
