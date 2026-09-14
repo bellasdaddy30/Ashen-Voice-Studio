@@ -3,12 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "serve -s dist -l 8091"
   },
   "dependencies": {
     "@huggingface/transformers": "4.2.0"
   },
   "devDependencies": {
+    "serve": "^14.2.4",
     "vite": "^7.1.0"
   }
 }
