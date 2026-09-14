@@ -2,7 +2,7 @@
 // 0 = clean, .25 subtle, .5 obvious, .75 damaged, 1 = extreme.
 (function(){
   const n01=v=>Math.max(0,Math.min(1,Number(v)||0));
-  const shape=v=>v*v*(3-2*v); // smoothstep gives useful low end and strong upper range
+  const shape=v=>v*v*(3-2*v);
 
   const baseMakeChar=makeChar;
   makeChar=function(c={}){
@@ -47,14 +47,12 @@
 
     for(let i=0;i<N;i++){
       const x=src[i],a=Math.abs(x);
-      env+=(a>env?.22:.004)*(a-env);
+      env+=(a>env ? .22 : .004)*(a-env);
       slow+=.012*(x-slow);
       const edge=x-prev;prev=x;
 
-      // Dryness removes chest/body energy and exaggerates consonant edges.
       let y=x - slow*(D*.30) + edge*(D*.34);
 
-      // Strong rasp: waveshaping plus irregular vocal-fry amplitude breakup.
       const distorted=Math.tanh(y*drive)/norm;
       const wet=.08+R*.58;
       y=y*(1-wet)+distorted*wet;
@@ -64,14 +62,12 @@
       const jitter=.72+.28*rand();
       y*=1-R*(.06+.24*fry*jitter)*Math.min(1,env*7);
 
-      // Breath: high-passed noise follows speech envelope but remains audible in whisper gaps.
       const white=rand()*2-1;
       noiseLP+=.08*(white-noiseLP);
       const hp=white-noiseLP;
       const breathGain=B*(.010+.075*Math.sqrt(Math.min(1,env*6)));
       y+=hp*breathGain;
 
-      // Crackle: short dry catches with grit + micro-dropout, increasingly frequent/intense.
       if(i>=nextCrack&&env>.010&&C>.005){
         crackLen=Math.max(3,Math.floor(rate*(.002+rand()*(.006+.006*C))));
         crackLeft=crackLen;
@@ -87,7 +83,6 @@
         crackLeft--;
       }
 
-      // Small scratch component from differentiated signal. This makes max settings unmistakable.
       y+=edge*R*D*.20;
       out[i]=Math.max(-.985,Math.min(.985,y));
     }
