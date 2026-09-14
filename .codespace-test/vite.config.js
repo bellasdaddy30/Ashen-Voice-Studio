@@ -8,8 +8,11 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 8080,
+    port: 8091,
     strictPort: true,
+    headers: {
+      'Cache-Control': 'no-store, max-age=0'
+    },
     fs: {
       allow: ['/workspaces']
     }
