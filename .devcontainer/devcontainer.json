@@ -1,0 +1,12 @@
+{
+  "name": "Ashen Voice Studio Test",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Ashen Voice v0.8.4 Runtime Test",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postStartCommand": "nohup python3 .devcontainer/serve_test.py > /tmp/ashen-codespace.log 2>&1 &"
+}
