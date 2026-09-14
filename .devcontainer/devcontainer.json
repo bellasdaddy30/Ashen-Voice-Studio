@@ -1,13 +1,13 @@
 {
   "name": "Ashen Voice Fixed WASM Test",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "forwardPorts": [8080],
+  "forwardPorts": [8091],
   "portsAttributes": {
-    "8080": {
-      "label": "Ashen Voice · Fixed VoxShot WASM",
+    "8091": {
+      "label": "Ashen Voice · Fixed VoxShot WASM · PORT 8091",
       "onAutoForward": "openBrowser"
     }
   },
   "postCreateCommand": "bash .devcontainer/setup_voxshot.sh",
-  "postStartCommand": "cd .codespace-test && nohup npm run dev -- --host 0.0.0.0 --port 8080 > /tmp/ashen-fixed-wasm.log 2>&1 &"
+  "postStartCommand": "cd .codespace-test && nohup npm run dev -- --host 0.0.0.0 --port 8091 > /tmp/ashen-fixed-wasm-8091.log 2>&1 &"
 }
