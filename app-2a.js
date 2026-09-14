@@ -1,5 +1,5 @@
-// ASHEN VOICE STUDIO v0.7.4 — phone-first build
-const VERSION='0.7.4';
+// ASHEN VOICE STUDIO v0.7.7 — phone-first build
+const VERSION='0.7.7';
 const KOKORO_MODEL='onnx-community/Kokoro-82M-v1.0-ONNX';
 const STORAGE_KEY='ashen-voice-v071-state';
 const DB_NAME='ashen-voice-v071'; const DB_STORE='clips';
