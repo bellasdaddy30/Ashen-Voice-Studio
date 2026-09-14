@@ -17,5 +17,6 @@ npm run build
 
 cd "$ROOT/.codespace-test"
 npm install
+npm run build
 
-printf '\nFixed VoxShot build ready.\n'
+printf '\nFixed VoxShot static test build ready on port 8091.\n'
