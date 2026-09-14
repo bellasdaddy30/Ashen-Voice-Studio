@@ -1,24 +1,45 @@
 # Ashen Voice Studio
 
-Canonical clean repository for the phone-first audiobook production app.
+Canonical phone-first audiobook production app for *The First City*.
 
 ## Current build
 
-**v0.7.0**
+**v0.9.0**
 
-This repository is designed for direct Vercel deployment from GitHub.
+The repository deploys directly to Vercel from GitHub.
+
+## Active runtime
+
+The production page loads the core split app, `voice-processing.js`, `ui-v076.js`, the Auto Director/SFX modules, and `performance-v090.js`.
+
+`performance-v090.js` is the unified recorded-performance layer:
+
+- Any character may use normal TTS, true voice blend, or Recorded mode.
+- Any individual line may be recorded on iPhone or imported as audio.
+- Recorded performances use the same speed, pitch, tone, emotion, intensity, rasp, breath, throat-catch, dryness, and room/echo controls.
+- Recorded source audio is stored locally in IndexedDB and is not committed to the public repository.
+- Dead King defaults to Recorded mode for the Chapter One line “Zikir Ashur.”
+
+Failed Reference Voice / Chatterbox / VoxShot experiments and obsolete throat-effect generations have been removed from the repository.
 
 ## Repository layout
 
 ```text
 Ashen-voice-studio/
 ├── index.html
+├── styles.css
 ├── kokoro-worker.js
+├── performance-v090.js
+├── voice-processing.js
+├── ui-v076.js
+├── app-*.js
+├── audio-hotfix.js
 ├── diagnostics.html
 ├── vercel.json
 ├── .gitignore
 ├── README.md
 ├── docs/
+│   └── PROJECT_RULES.md
 └── book-data/
     ├── manifest.json
     ├── characters/
@@ -30,11 +51,12 @@ Ashen-voice-studio/
     │       ├── production.json
     │       ├── manuscript.txt
     │       ├── pronunciations.txt
-    │       ├── pronunciation-notes.txt
     │       ├── production-guide.txt
-    │       ├── overrides.json
-    │       ├── sfx-suggestions.json
-    │       └── qa-checklist.txt
+    │       └── segments/
+    │           ├── lines-001-049.json
+    │           ├── lines-050-098.json
+    │           ├── lines-099-147.json
+    │           └── lines-148-196.json
     └── sfx/
         ├── library.json
         └── audio/
@@ -52,45 +74,27 @@ Segments: **196**
 - Bel-iddin: 5
 - Dead King: 1
 
-There are no unidentified/unknown character profiles.
+There are no unidentified or unknown character profiles.
 
-Zik, Zikir and Zikir Ashur are one character profile.
-The second-door written warning is assigned to Bel-iddin.
-The crowned skeleton speaker uses the canon role Dead King.
+Zik, Zikir, and Zikir Ashur are one character profile. The second-door written warning is assigned to Bel-iddin. The crowned skeleton speaker uses the canon role Dead King.
 
 ## Startup flow
 
-1. `index.html` starts.
-2. It fetches `/book-data/manifest.json`.
-3. The manifest identifies the active chapter and project files.
-4. Character cards, production, manuscript, pronunciations and guide load automatically.
-5. Auto Director creates contextual performance direction.
-6. Manual character, speaker and performance overrides remain available.
-7. Kokoro is loaded only when voice generation is requested.
-8. Kokoro runs in `kokoro-worker.js` so model work does not block the main UI.
-9. SFX are mixed after the clean narration master.
-
-## iPhone preview behavior
-
-The Preview tap unlocks Web Audio immediately. Kokoro then generates in the worker.
-When the WAV is ready, Ashen Voice attempts playback through the unlocked context and also shows a visible HTML audio player as a fallback.
+1. `index.html` loads the production scripts.
+2. `/book-data/manifest.json` identifies the active chapter and data files.
+3. Character cards, production data, manuscript, pronunciations, and production guide load automatically.
+4. Auto Director creates contextual performance direction.
+5. Manual speaker and direction corrections override automatic analysis.
+6. Kokoro loads only when synthetic voice generation is requested.
+7. Recorded line performances bypass TTS and are processed locally in the browser.
+8. SFX are mixed after the clean narration master.
 
 ## Diagnostics
 
-Open:
-
-`/diagnostics.html`
-
-This checks the worker, manifest, data files, WebGPU, IndexedDB and iPhone audio without loading the full Kokoro model.
+Open `/diagnostics.html` to check the worker, manifest, data files, IndexedDB, browser audio, and device capabilities.
 
 ## Adding SFX
 
-Put licensed audio under:
+Put licensed audio under `book-data/sfx/audio/`, then register it in `book-data/sfx/library.json` with source/license information.
 
-`book-data/sfx/audio/`
-
-Then register it in:
-
-`book-data/sfx/library.json`
-
-Do not put GitHub tokens or other secrets in `index.html`.
+Do not commit tokens, passwords, API keys, private voice recordings, or other secrets to this public repository.
