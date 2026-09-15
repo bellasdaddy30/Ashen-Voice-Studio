@@ -1,4 +1,4 @@
-// Ashen Voice Studio v0.7.6 audio engine bridge
+// Ashen Voice Studio v0.9.7 audio engine bridge
 // iPhone/iPad: force Kokoro WASM q8. Worker returns raw Float32 PCM buffers.
 
 function isAppleMobile(){return /iPhone|iPad|iPod/i.test(navigator.userAgent)}
@@ -14,7 +14,7 @@ function workerAudioToBlob(g){
 
 ensureKokoroWorker=function(){
   if(kokoroWorker)return kokoroWorker;
-  const w=new Worker('/kokoro-worker.js?v=076',{type:'module'});
+  const w=new Worker('/kokoro-worker.js?v=097',{type:'module'});
   kokoroWorker=w;
   w.onmessage=(ev)=>{
     const m=ev.data||{};
@@ -37,12 +37,27 @@ ensureKokoroWorker=function(){
     else p.reject(new Error(m.error||'Voice worker failed'));
   };
   w.onerror=(e)=>{
+    try{e.preventDefault?.();e.stopPropagation?.()}catch{}
+    const raw=String(e?.message||'').trim();
+    const msg=raw&&raw!=='Script error.'?raw:'Kokoro voice worker crashed in Safari';
     console.error('Kokoro worker error',e);
-    rejectWorkerPending(e.message||'Voice worker crashed');
+    rejectWorkerPending(msg);
+    try{w.terminate()}catch{}
+    if(kokoroWorker===w)kokoroWorker=null;
     kokoroWorkerReady=false;
     kokoro=null;
+    kokoroLoading=null;
     setVoiceBusy(false);
-    setEngineProgress('Voice worker crashed · app still running',false);
+    setEngineProgress(msg+' · retrying is safe',false);
+    return true;
+  };
+  w.onmessageerror=(e)=>{
+    const msg='Kokoro worker returned unreadable audio data';
+    rejectWorkerPending(msg);
+    try{w.terminate()}catch{}
+    if(kokoroWorker===w)kokoroWorker=null;
+    kokoroWorkerReady=false;kokoro=null;kokoroLoading=null;
+    setVoiceBusy(false);setEngineProgress(msg,false);
   };
   return w;
 };
