@@ -1,6 +1,6 @@
-// Ashen Voice Studio v0.9.2 — startup and repository-loading optimization
+// Ashen Voice Studio v0.9.4 — fast startup + persistent generated-audio recovery
 (function(){
-  const DATA_BUILD='092';
+  const DATA_BUILD='094';
   const fastUrl=p=>{const u=new URL(url(p));u.searchParams.set('b',DATA_BUILD);return u.toString()};
 
   text=async function(p,req=true){
@@ -15,6 +15,37 @@
     return t==null?null:JSON.parse(t);
   };
 
+  async function storedAudioKeys(){
+    const db=await openDb();
+    try{
+      return await new Promise((resolve,reject)=>{
+        const tx=db.transaction(DB_STORE,'readonly');
+        const req=tx.objectStore(DB_STORE).getAllKeys();
+        req.onsuccess=()=>resolve(req.result||[]);
+        req.onerror=()=>reject(req.error||new Error('Could not read stored audio keys'));
+      });
+    }finally{try{db.close()}catch{}}
+  }
+
+  async function reconcileStoredAudio(){
+    try{
+      const keys=new Set(await storedAudioKeys());
+      const ch=chapter();
+      let count=0;
+      for(const l of ch.lines||[]){
+        const exists=keys.has(lineKey(l));
+        l.generated=exists;
+        if(exists)count++;
+      }
+      ch.masterReady=keys.has(masterKey())&&count===(ch.lines||[]).length;
+      save();
+      return count;
+    }catch(e){
+      console.warn('Stored-audio recovery skipped',e);
+      return (chapter().lines||[]).filter(l=>l.generated).length;
+    }
+  }
+
   loadRepo=async function(noAlert=false){
     try{
       setStatus('Loading repository project…');
@@ -22,7 +53,6 @@
       const key=m.activeChapter||Object.keys(m.chapters||{})[0],cfg=m.chapters[key];
       if(!cfg)throw Error('No active chapter in manifest');
 
-      // Start every independent request together instead of waiting on them one by one.
       const productionPromise=json(cfg.production);
       const cardsPromise=json(m.characters,false);
       const manuscriptPromise=text(cfg.manuscript,false);
@@ -57,9 +87,10 @@
       state.v7.customSfx=state.v7.customSfx||[];
       applyOv();
       autoDirect(false);
-      save();
+
+      const recovered=await reconcileStoredAudio();
       render();
-      setStatus('Project loaded');
+      setStatus(recovered?`Project loaded · ${recovered} stored WAV${recovered===1?'':'s'} recovered`:'Project loaded');
       return true;
     }catch(e){
       console.error(e);
@@ -69,5 +100,7 @@
     }
   };
 
+  // Public recovery hook for a manual repair without regenerating anything.
+  window.recoverGeneratedAudio=async function(){const n=await reconcileStoredAudio();render();setStatus(`${n} stored WAV${n===1?'':'s'} recovered`);return n};
   window.__ASHEN_DATA_BUILD=DATA_BUILD;
 })();
