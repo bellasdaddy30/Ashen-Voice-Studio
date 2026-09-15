@@ -1,4 +1,4 @@
-// Ashen Voice Studio v0.9.7 audio engine bridge
+// Ashen Voice Studio v1.2.1 audio engine bridge + low-memory assembly
 // iPhone/iPad: force Kokoro WASM q8. Worker returns raw Float32 PCM buffers.
 
 function isAppleMobile(){return /iPhone|iPad|iPod/i.test(navigator.userAgent)}
@@ -14,7 +14,7 @@ function workerAudioToBlob(g){
 
 ensureKokoroWorker=function(){
   if(kokoroWorker)return kokoroWorker;
-  const w=new Worker('/kokoro-worker.js?v=097',{type:'module'});
+  const w=new Worker('/kokoro-worker.js?v=121',{type:'module'});
   kokoroWorker=w;
   w.onmessage=(ev)=>{
     const m=ev.data||{};
@@ -106,4 +106,35 @@ loadKokoro=async function(){
     stopKokoroWorker('Voice engine failed · '+(e?.message||e));
     throw e;
   }finally{kokoroLoading=null}
+};
+
+// Low-memory WAV assembly. The old merge() decoded every line and retained all
+// AudioBuffers simultaneously. This version keeps source WAV data as Blob slices
+// whenever possible and only decodes one non-standard line at a time.
+async function ashenWavInfo(blob){
+  const ab=await blob.slice(0,Math.min(blob.size,65536)).arrayBuffer(),v=new DataView(ab);
+  const s=(o,n)=>{let x='';for(let i=0;i<n&&o+i<v.byteLength;i++)x+=String.fromCharCode(v.getUint8(o+i));return x};
+  if(v.byteLength<44||s(0,4)!=='RIFF'||s(8,4)!=='WAVE')return null;
+  let off=12,fmt=null,dataOffset=0,dataSize=0;
+  while(off+8<=v.byteLength){const id=s(off,4),z=v.getUint32(off+4,true),p=off+8;if(id==='fmt '&&p+16<=v.byteLength)fmt={format:v.getUint16(p,true),channels:v.getUint16(p+2,true),rate:v.getUint32(p+4,true),blockAlign:v.getUint16(p+12,true),bits:v.getUint16(p+14,true)};else if(id==='data'){dataOffset=p;dataSize=Math.min(z,blob.size-p);break}off=p+z+(z&1)}
+  return fmt&&dataOffset&&dataSize?{...fmt,dataOffset,dataSize}:null;
+}
+function ashenWavHeader(dataBytes,rate){const b=new ArrayBuffer(44),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+dataBytes,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,dataBytes,true);return b}
+function floatToPcm16Bytes(src){const b=new ArrayBuffer(src.length*2),v=new DataView(b);for(let i=0;i<src.length;i++){const x=Math.max(-1,Math.min(1,src[i]||0));v.setInt16(i*2,x<0?x*32768:x*32767,true)}return new Uint8Array(b)}
+merge=async function(blobs,pauses){
+  if(!blobs?.length)return new Blob([],{type:'audio/wav'});
+  let first=await ashenWavInfo(blobs[0]).catch(()=>null),rate=first?.rate||0;
+  if(!rate){const d=await decode(blobs[0]);rate=d.sampleRate}
+  const parts=[],zeroCache=new Map();let dataBytes=0;
+  for(let i=0;i<blobs.length;i++){
+    const b=blobs[i],info=await ashenWavInfo(b).catch(()=>null);
+    if(info&&info.format===1&&info.channels===1&&info.bits===16&&info.rate===rate){parts.push(b.slice(info.dataOffset,info.dataOffset+info.dataSize));dataBytes+=info.dataSize}
+    else{
+      const d=await decode(b),src=d.getChannelData(0),pcm=d.sampleRate===rate?src:resample(src,d.sampleRate,rate),bytes=floatToPcm16Bytes(pcm);parts.push(bytes);dataBytes+=bytes.byteLength
+    }
+    const pauseFrames=Math.max(0,Math.round((Number(pauses?.[i])||0)*rate)),pauseBytes=pauseFrames*2;
+    if(pauseBytes){let z=zeroCache.get(pauseBytes);if(!z){z=new Uint8Array(pauseBytes);if(zeroCache.size<8)zeroCache.set(pauseBytes,z)}parts.push(z);dataBytes+=pauseBytes}
+    if(i%12===0)await new Promise(r=>setTimeout(r,0));
+  }
+  return new Blob([ashenWavHeader(dataBytes,rate),...parts],{type:'audio/wav'});
 };
